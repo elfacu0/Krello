@@ -11,28 +11,28 @@ datasource db {
 }
 
 model User {
-  id  Int @default(autoincrement()) @id
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  username String
-  email String?
+
+  username       String  @unique
+  email          String? @unique
   hashedPassword String
-  tasks Task[]
+  tasks          Task[]
 
   @@map("users")
 }
 
 model Task {
-  id Int @default(autoincrement()) @id
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   content String
-  status TaskStatus @default(TODO)
+  status  TaskStatus @default(TODO)
 
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   @@map("tasks")
 }
