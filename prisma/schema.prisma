@@ -22,3 +22,23 @@ model User {
 
   @@map("users")
 }
+
+model Task {
+  id Int @default(autoincrement()) @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content String
+  status TaskStatus @default(TODO)
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  DOING
+  COMPLETED
+}
