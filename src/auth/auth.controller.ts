@@ -13,10 +13,10 @@ export class AuthController {
         return this.authService.register(dto);        
     }
 
+    @HttpCode(HttpStatus.OK)
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    login(@Request() req) {
-        console.log(req.user);
+    async login(@Request() req) {
         return req.user;
     }
 }

@@ -12,9 +12,10 @@ export class AuthService {
 
     async validateUser(username: string, password: string) {
         const user = await this.usersService.getUser(username);
-        const hashedPassword = await bcrypt.hash(password, 10);
+        if (user === undefined) return null;
+        const match = await bcrypt.compare(password, user.hashedPassword);
 
-        if (user && user.hashedPassword === hashedPassword) {
+        if (match) {
             const { hashedPassword, ...result } = user;
             return result;
         }
@@ -33,6 +34,7 @@ export class AuthService {
                     hashedPassword
                 }
             })
+            return user;
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError && error.code == 'P2002') {
                 throw new ForbiddenException("Credentials Taken");
