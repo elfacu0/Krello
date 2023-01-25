@@ -1,14 +1,16 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RepositoryService } from 'src/repository/repository.service';
 import { UsersService } from 'src/users/users.service';
-import { LoginDto, RegisterDto } from './dto';
+import { RegisterDto } from './dto';
 
 @Injectable()
 export class AuthService {
     constructor(private readonly usersService: UsersService,
-        private readonly repository: RepositoryService) { }
+        private readonly repository: RepositoryService,
+        private readonly jwtService: JwtService) { }
 
     async validateUser(username: string, password: string) {
         const user = await this.usersService.getUser(username);
@@ -43,5 +45,10 @@ export class AuthService {
         }
     }
 
-    async login(dto: LoginDto) { }
+    async login(user: any) {
+        const payload = { username: user.username, sub: user.userId };
+        return {
+            access_token: this.jwtService.sign(payload)
+        }
+    }
 }
