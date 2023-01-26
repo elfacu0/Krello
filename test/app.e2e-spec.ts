@@ -110,4 +110,29 @@ describe('AppController (e2e)', () => {
   });
 
 
+  describe("User", () => {
+
+    it("Should throw error because user doesnt exist", () => {
+      return request(app.getHttpServer()).get(`/users/${userId+100}`).expect(HttpStatus.BAD_REQUEST)
+    });
+
+    it("Should retrive only user created", () => {
+      return request(app.getHttpServer()).get(`/users/${userId}`).expect(HttpStatus.OK)
+    });
+
+    it("Should NOT edit user email because it has no authorization ", async() => {
+      const dto = {email: "pepe@gmail.com"};
+      const res = await request(app.getHttpServer()).patch(`/users/edit`).send(dto).expect(HttpStatus.UNAUTHORIZED);
+      expect(res.body.email).not.toEqual(dto.email);
+    });
+
+    it("Should edit user email", async() => {
+      const dto = {email: "pepe@gmail.com"};
+      const res = await request(app.getHttpServer()).patch(`/users/edit`).set('Authorization', `Bearer ${access_token}`).send(dto).expect(HttpStatus.OK);
+      expect(res.body.email).toEqual(dto.email);
+    });
+
+  });
+
+
 });
