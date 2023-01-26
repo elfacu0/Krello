@@ -7,7 +7,7 @@ import { ImportCollectionDto } from './dto';
 export class CollectionsController {
     constructor(private collectionsService: CollectionsService) { }
 
-    @HttpCode(HttpStatus.OK)
+    @HttpCode(HttpStatus.CREATED)
     @UseGuards(JwtAuthGuard)
     @Post("export")
     exportCollection(@Request() req) {
