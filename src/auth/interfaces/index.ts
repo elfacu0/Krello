@@ -1,0 +1,1 @@
+export * from './validUser.interface'
