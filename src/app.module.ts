@@ -6,11 +6,12 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
+import { CollectionsModule } from './collections/collections.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
-  }), AuthModule, UsersModule, RepositoryModule, TasksModule],
+  }), AuthModule, UsersModule, RepositoryModule, TasksModule, CollectionsModule],
   providers: [AppService],
   controllers: [AppController]
 })
