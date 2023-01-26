@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { RepositoryService } from 'src/repository/repository.service';
+import { RepositoryService } from '../repository/repository.service';
 import { CreateTaskDto } from './dto';
 import { DeleteTaskDto } from './dto/deleteTask.dto';
-import { TasksModule } from './tasks.module';
 
 @Injectable()
 export class TasksService {

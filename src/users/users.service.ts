@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { RepositoryService } from 'src/repository/repository.service';
+import { RepositoryService } from '../repository/repository.service';
 import { EditUserDto } from './dto';
 
 @Injectable()

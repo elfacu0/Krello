@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards, Request, Body, Delete } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateTaskDto } from './dto';
 import { DeleteTaskDto } from './dto/deleteTask.dto';
 import { TasksService } from './tasks.service';

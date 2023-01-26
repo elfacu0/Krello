@@ -2,8 +2,8 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { RepositoryService } from 'src/repository/repository.service';
-import { UsersService } from 'src/users/users.service';
+import { RepositoryService } from '../repository/repository.service';
+import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class AuthService {
         private readonly jwtService: JwtService) { }
 
     async validateUser(username: string, password: string) {
-        const user = await this.usersService.getUser(username);
-        if (user === undefined) return null;
+        const user = await this.usersService.getUser(username);        
+        if (user === null) return null;
         const match = await bcrypt.compare(password, user.hashedPassword);
 
         if (match) {
