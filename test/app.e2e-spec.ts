@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { RepositoryService } from '../src/repository/repository.service';
 import { LoginDto, RegisterDto } from '../src/auth/dto';
-import { CreateTaskDto, EditTaskDto } from 'src/tasks/dto';
+import { CreateTaskDto, DeleteTaskDto, EditTaskDto } from 'src/tasks/dto';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -113,26 +113,95 @@ describe('AppController (e2e)', () => {
   describe("User", () => {
 
     it("Should throw error because user doesnt exist", () => {
-      return request(app.getHttpServer()).get(`/users/${userId+100}`).expect(HttpStatus.BAD_REQUEST)
+      return request(app.getHttpServer()).get(`/users/${userId + 100}`).expect(HttpStatus.BAD_REQUEST)
     });
 
     it("Should retrive only user created", () => {
       return request(app.getHttpServer()).get(`/users/${userId}`).expect(HttpStatus.OK)
     });
 
-    it("Should NOT edit user email because it has no authorization ", async() => {
-      const dto = {email: "pepe@gmail.com"};
+    it("Should NOT edit user email because it has no authorization ", async () => {
+      const dto = { email: "pepe@gmail.com" };
       const res = await request(app.getHttpServer()).patch(`/users/edit`).send(dto).expect(HttpStatus.UNAUTHORIZED);
       expect(res.body.email).not.toEqual(dto.email);
     });
 
-    it("Should edit user email", async() => {
-      const dto = {email: "pepe@gmail.com"};
+    it("Should edit user email", async () => {
+      const dto = { email: "pepe@gmail.com" };
       const res = await request(app.getHttpServer()).patch(`/users/edit`).set('Authorization', `Bearer ${access_token}`).send(dto).expect(HttpStatus.OK);
       expect(res.body.email).toEqual(dto.email);
     });
 
   });
 
+
+  describe("Task", () => {
+    let taskId;
+    const taskDto: CreateTaskDto = {
+      content: "My task",
+      status: "TODO"
+    };
+
+    it("should return an empty array", async () => {
+      const res = await request(app.getHttpServer()).get(`/tasks/all`).expect(HttpStatus.OK);
+      expect(res.body).toEqual([]);
+    });
+
+    it("should not create a task because its not authorized", () => {
+      return request(app.getHttpServer()).post(`/tasks/create`).send(taskDto).expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it("should create a task", async () => {
+      const res = await request(app.getHttpServer()).post(`/tasks/create`).set('Authorization', `Bearer ${access_token}`).send(taskDto).expect(HttpStatus.CREATED);
+      taskId = res.body.id;
+    });
+
+    it("should not return an empty array", async () => {
+      const res = await request(app.getHttpServer()).get(`/tasks/all`).expect(HttpStatus.OK);
+      expect(res.body).not.toEqual([]);
+    });
+
+    it("should not edit a task if not authorized", () => {
+      const dto: EditTaskDto = {
+        id: taskId,
+        content: "pepe",
+        status: "COMPLETED"
+      }
+      return request(app.getHttpServer()).patch(`/tasks/edit`).send(dto).expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it("should edit a task if authorized", async () => {
+      const dto: EditTaskDto = {
+        id: taskId,
+        content: "pepe",
+        status: "COMPLETED"
+      }
+
+      const res = await request(app.getHttpServer()).patch(`/tasks/edit`).set('Authorization', `Bearer ${access_token}`).send(dto).expect(HttpStatus.OK);
+      expect(res.body).toMatchObject(dto);
+    });
+
+
+    it("should not delete a task if not authorized", () => {
+      const dto: DeleteTaskDto = {
+        id: taskId
+      }
+      return request(app.getHttpServer()).delete(`/tasks/delete`).send(dto).expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it("should delete a task if authorized", () => {
+      const dto: DeleteTaskDto = {
+        id: taskId
+      }
+
+      return request(app.getHttpServer()).delete(`/tasks/delete`).set('Authorization', `Bearer ${access_token}`).send(dto).expect(HttpStatus.OK);
+    });
+
+    it("should return an empty array", async () => {
+      const res = await request(app.getHttpServer()).get(`/tasks/all`).expect(HttpStatus.OK);
+      expect(res.body).toEqual([]);
+    });
+
+  });
 
 });
