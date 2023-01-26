@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { RepositoryService } from '../src/repository/repository.service';
 import { LoginDto, RegisterDto } from '../src/auth/dto';
 import { CreateTaskDto, DeleteTaskDto, EditTaskDto } from 'src/tasks/dto';
+import { ImportCollectionDto } from 'src/collections/dto';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -200,6 +201,31 @@ describe('AppController (e2e)', () => {
     it("should return an empty array", async () => {
       const res = await request(app.getHttpServer()).get(`/tasks/all`).expect(HttpStatus.OK);
       expect(res.body).toEqual([]);
+    });
+
+  });
+
+
+  describe("Collection", () => {
+    let collectionId: number;
+    it("Should not create collection if user is not logged", () => {
+      return request(app.getHttpServer()).post(`/collections/export`).expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it("Should create collection if user is logged", async () => {
+      const res = await request(app.getHttpServer()).post(`/collections/export`).set('Authorization', `Bearer ${access_token}`).expect(HttpStatus.CREATED);
+      collectionId = res.body.id;
+    });
+
+    it("Should not import collection if user is not logged", () => {
+      return request(app.getHttpServer()).post(`/collections/import`).expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it("Should import collection if user is logged", () => {
+      const dto: ImportCollectionDto = {
+        id: collectionId
+      }
+      return request(app.getHttpServer()).post(`/collections/import`).set('Authorization', `Bearer ${access_token}`).send(dto).expect(HttpStatus.OK);
     });
 
   });
