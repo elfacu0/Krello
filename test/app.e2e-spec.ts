@@ -9,8 +9,8 @@ import { CreateTaskDto, DeleteTaskDto, EditTaskDto } from 'src/tasks/dto';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let repository: RepositoryService;
-  let access_token;
-  let userId;
+  let access_token: string;
+  let userId: number;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
