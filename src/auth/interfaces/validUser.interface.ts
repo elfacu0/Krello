@@ -1,3 +1,3 @@
 import { User } from "@prisma/client";
 
-export interface validUser extends Omit<User, 'hashedPassword'> {}
+export interface ValidUser extends Omit<User, 'hashedPassword'> {}
