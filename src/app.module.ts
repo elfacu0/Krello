@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { UsersModule } from './users/users.module';
 import { RepositoryModule } from './repository/repository.module';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
 import { CollectionsModule } from './collections/collections.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({
+  imports: [ScheduleModule.forRoot(), ConfigModule.forRoot({
     isGlobal: true
   }), AuthModule, UsersModule, RepositoryModule, TasksModule, CollectionsModule],
   providers: [AppService],
