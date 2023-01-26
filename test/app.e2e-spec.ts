@@ -133,6 +133,29 @@ describe('AppController (e2e)', () => {
       expect(res.body.email).toEqual(dto.email);
     });
 
+
+    it("Should create and delete a new user", async () => {
+      const registerDto_: RegisterDto = {
+        username: "newUser",
+        password: "newPassword",
+        confirmPassword: "newPassword",
+        email: "email@gmail.com"
+      };
+  
+      const loginDto_: LoginDto = {
+        username: registerDto_.username,
+        password: registerDto_.password
+      }
+
+      let res = await request(app.getHttpServer()).post(`/auth/register`).send(registerDto_).expect(HttpStatus.CREATED);
+      const currId = res.body.id;
+
+      res = await request(app.getHttpServer()).post(`/auth/login`).send(loginDto_).expect(HttpStatus.OK);
+      const token = res.body.access_token;
+
+      res = await request(app.getHttpServer()).delete(`/users/delete`).set('Authorization', `Bearer ${token}`).expect(HttpStatus.OK);
+    });
+
   });
 
 
