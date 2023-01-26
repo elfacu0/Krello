@@ -1,12 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { RepositoryService } from 'src/repository/repository.service';
 import { CreateTaskDto } from './dto';
+import { DeleteTaskDto } from './dto/deleteTask.dto';
+import { TasksModule } from './tasks.module';
 
 @Injectable()
 export class TasksService {
     constructor(private repository: RepositoryService) { }
 
-    async getTasks(){
+    async getTasks() {
         return await this.repository.task.findMany();
     }
 
@@ -30,5 +32,12 @@ export class TasksService {
             }
         })
 
+    }
+
+    async deleteTask(userId: number, dto: DeleteTaskDto) {
+        const { id } = dto;
+        const task = await this.getTask(id);
+        if (task.userId != userId) throw new UnauthorizedException();
+        return await this.repository.task.delete({ where: { id } });
     }
 }
