@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { RepositoryService } from '../repository/repository.service';
-import { CreateTaskDto } from './dto';
+import { CreateTaskDto, EditTaskDto } from './dto';
 import { DeleteTaskDto } from './dto/deleteTask.dto';
 
 @Injectable()
@@ -31,6 +31,13 @@ export class TasksService {
             }
         })
 
+    }
+
+    async editTask(userId: number, dto: EditTaskDto) {
+        const { id, ...data } = dto;
+        const task = await this.getTask(dto.id);
+        if (task.userId != userId) throw new UnauthorizedException();
+        return await this.repository.task.update({ where: { id }, data });
     }
 
     async deleteTask(userId: number, dto: DeleteTaskDto) {

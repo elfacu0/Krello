@@ -1,6 +1,6 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards, Request, Body, Delete } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards, Request, Body, Delete, Patch } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CreateTaskDto } from './dto';
+import { CreateTaskDto, EditTaskDto } from './dto';
 import { DeleteTaskDto } from './dto/deleteTask.dto';
 import { TasksService } from './tasks.service';
 
@@ -22,11 +22,19 @@ export class TasksController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @HttpCode(HttpStatus.OK)
+    @HttpCode(HttpStatus.CREATED)
     @Post("create")
     createTask(@Request() req, @Body() dto: CreateTaskDto) {
         const { user } = req;
         return this.taskService.createTask(user.id, dto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    @Patch("edit")
+    editTask(@Request() req, @Body() dto: EditTaskDto) {
+        const { user } = req;
+        return this.taskService.editTask(user.id, dto);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -36,8 +44,5 @@ export class TasksController {
         const { user } = req;
         return this.taskService.deleteTask(user.id, dto);
     }
-
-
-
 
 }
