@@ -62,6 +62,27 @@ export class UsersService {
         } catch (err) {
             throw new BadRequestException('Invalid user');
         }
+    }
+
+
+    async deleteUser(id: number) {
+        try {
+            const deleteTasks = this.repository.task.deleteMany({
+                where: {
+                    userId: id
+                },
+            });
+
+            const deleteUser = this.repository.user.delete({
+                where: {
+                    id
+                }
+            });
+
+            return await this.repository.$transaction([deleteTasks, deleteUser]);
+        } catch (err) {
+            throw new BadRequestException('Invalid user');
+        }
 
     }
 }
