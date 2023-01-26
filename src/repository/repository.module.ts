@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { RepositoryService } from './repository.service';
 
+@Global()
 @Module({
   providers: [RepositoryService],
   exports: [RepositoryService]
