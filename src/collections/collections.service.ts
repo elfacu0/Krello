@@ -17,6 +17,15 @@ export class CollectionsService {
         }
     }
 
+    async deleteCollection(collectionId: number): Promise<Collection | Error> {
+        if (collectionId === undefined) throw new BadRequestException('parameter error', { cause: new Error(), description: 'id needs to be a number' })
+        try {
+            return await this.repository.collection.delete({ where: { id: collectionId } });
+        } catch (err) {
+            return err;
+        }
+    }
+
     async exportCollection(userId: number) {
         const tasks = await this.usersService.getUserTasks(userId);
         const taskIds = tasks.map(task => task.id);
