@@ -30,6 +30,24 @@ export class UsersService {
         }
     }
 
+    async getUserTasks(userId: number) {
+        if (userId === undefined) throw new BadRequestException('parameter error', { cause: new Error(), description: 'userId needs to be a number' })
+        try {
+            const { hashedPassword, ...user } = await this.repository.user.findUnique({
+                where: {
+                    id: userId
+                },
+                include: {
+                    tasks: true
+                }
+            });
+            return user.tasks;
+        } catch (err) {
+            throw new BadRequestException('Invalid user');
+        }
+    }
+
+
     async editUser(id: number, dto: EditUserDto) {
         try {
             const user: User = await this.repository.user.update({
