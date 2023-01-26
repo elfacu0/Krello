@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Collection } from '@prisma/client';
-import { RepositoryService } from 'src/repository/repository.service';
-import { TasksService } from 'src/tasks/tasks.service';
-import { UsersService } from 'src/users/users.service';
+import { RepositoryService } from '../repository/repository.service';
+import { TasksService } from '../tasks/tasks.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CollectionsService {
