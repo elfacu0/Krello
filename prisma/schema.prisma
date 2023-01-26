@@ -42,3 +42,14 @@ enum TaskStatus {
   DOING
   COMPLETED
 }
+
+
+model Collection {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  taskIds Int[]
+
+  @@map("collections")
+}
