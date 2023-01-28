@@ -21,7 +21,7 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     await app.init();
-    await app.listen(3000);
+    await app.listen(3333);
 
     repository = app.get(RepositoryService);
     await repository.cleanDb();
@@ -119,6 +119,15 @@ describe('AppController (e2e)', () => {
 
     it("Should retrive only user created", () => {
       return request(app.getHttpServer()).get(`/users/${userId}`).expect(HttpStatus.OK)
+    });
+
+    it("Should NOT retrieve user tasks because it has no authorization ", () => {
+      return request(app.getHttpServer()).get(`/users/tasks`).expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it("Should retrieve user tasks", async () => {
+      const res = await request(app.getHttpServer()).get(`/users/tasks`).set('Authorization', `Bearer ${access_token}`).expect(HttpStatus.OK);
+      expect(res.body.tasks).not.toBe([]);
     });
 
     it("Should NOT edit user email because it has no authorization ", async () => {
