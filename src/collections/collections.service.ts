@@ -26,6 +26,18 @@ export class CollectionsService {
         }
     }
 
+    async deleteExpiredCollections() {
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        return await this.repository.collection.deleteMany({
+            where: {
+                createdAt: {
+                    gte: date,
+                }
+            }
+        });
+    }
+
     async exportCollection(userId: number) {
         const tasks = await this.usersService.getUserTasks(userId);
         const taskIds = tasks.map(task => task.id);
