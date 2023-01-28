@@ -7,6 +7,14 @@ import { UsersService } from './users.service';
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
     @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    @Get("tasks")
+    getTasks(@Request() req) {
+        const { user } = req;
+        return this.usersService.getUserTasks(Number(user.id));
+    }
+
+    @HttpCode(HttpStatus.OK)
     @Get(":id")
     getUserById(@Param('id', ParseIntPipe) userId: number) {
         return this.usersService.getUserById(userId);
