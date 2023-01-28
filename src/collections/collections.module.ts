@@ -6,6 +6,7 @@ import { UsersService } from '../users/users.service';
 
 @Module({
   providers: [CollectionsService, TasksService, UsersService],
-  controllers: [CollectionsController]
+  controllers: [CollectionsController],
+  exports: [CollectionsService]
 })
 export class CollectionsModule { }
