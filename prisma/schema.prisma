@@ -20,7 +20,7 @@ model User {
   hashedPassword String
   tasks          Task[]
 
-  HashedRefreshToken String?
+  hashedRefreshToken String?
 
   @@map("users")
 }
