@@ -89,6 +89,14 @@ export class AuthService {
     }
 
     async refresh(user: any): Promise<AccessToken | Error> {
+        const { hashedRefreshToken } = await this.usersService.getUserById(user.id);
+        const { refreshToken } = user;
+        if (hashedRefreshToken === null) throw new ForbiddenException("User is not Logged in");
+
+        const match = await bcrypt.compare(refreshToken, hashedRefreshToken);
+
+        if (match === false) throw new ForbiddenException("Invalid Refresh Token");
+
         const accessToken = await this.generateAccessToken(user);
         return { access_token: accessToken };
     }
