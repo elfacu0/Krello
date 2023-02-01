@@ -71,7 +71,7 @@ export class AuthService {
                 }
             })
 
-            const token = this.generateTokens(user);
+            const token = await this.generateTokens(user);
             return { id: user.id, ...token };
 
         } catch (error) {
