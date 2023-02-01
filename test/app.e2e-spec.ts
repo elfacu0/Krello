@@ -11,6 +11,7 @@ describe('AppController (e2e)', () => {
   let app: INestApplication;
   let repository: RepositoryService;
   let access_token: string;
+  let refresh_token: string;
   let userId: number;
 
   beforeAll(async () => {
@@ -54,24 +55,24 @@ describe('AppController (e2e)', () => {
 
 
     it("Should not login because user is not created", () => {
-      return request(app.getHttpServer()).post("/auth/login").send(loginDto).expect(HttpStatus.UNAUTHORIZED)
+      return request(app.getHttpServer()).post("/auth/login").send(loginDto).expect(HttpStatus.UNAUTHORIZED);
     })
 
     describe("Register", () => {
 
       it("Should throw error if username is empty", () => {
         const { username, ...dto } = registerDto;
-        return request(app.getHttpServer()).post("/auth/register").send(dto).expect(HttpStatus.BAD_REQUEST)
+        return request(app.getHttpServer()).post("/auth/register").send(dto).expect(HttpStatus.BAD_REQUEST);
       });
 
       it("Should throw error if password is empty", () => {
         const { password, ...dto } = registerDto;
-        return request(app.getHttpServer()).post("/auth/register").send(dto).expect(HttpStatus.BAD_REQUEST)
+        return request(app.getHttpServer()).post("/auth/register").send(dto).expect(HttpStatus.BAD_REQUEST);
       });
 
       it("Should throw error if confirmPassword is empty", () => {
         const { confirmPassword, ...dto } = registerDto;
-        return request(app.getHttpServer()).post("/auth/register").send(dto).expect(HttpStatus.BAD_REQUEST)
+        return request(app.getHttpServer()).post("/auth/register").send(dto).expect(HttpStatus.BAD_REQUEST);
       });
 
       it("Should register", async () => {
@@ -84,28 +85,62 @@ describe('AppController (e2e)', () => {
 
 
     describe("Login", () => {
-
       it("Should not login because dto is empty", () => {
         const dto = {};
-        return request(app.getHttpServer()).post("/auth/login").send(dto).expect(HttpStatus.UNAUTHORIZED)
+        return request(app.getHttpServer()).post("/auth/login").send(dto).expect(HttpStatus.UNAUTHORIZED);
       });
 
       it("Should not login because username is wrong", () => {
         const dto = { ...loginDto, username: "fake" };
-        return request(app.getHttpServer()).post("/auth/login").send(dto).expect(HttpStatus.UNAUTHORIZED)
+        return request(app.getHttpServer()).post("/auth/login").send(dto).expect(HttpStatus.UNAUTHORIZED);
       });
 
       it("Should not login because password is wrong", () => {
         const dto = { ...loginDto, password: "fake" };
-        return request(app.getHttpServer()).post("/auth/login").send(dto).expect(HttpStatus.UNAUTHORIZED)
+        return request(app.getHttpServer()).post("/auth/login").send(dto).expect(HttpStatus.UNAUTHORIZED);
       });
 
       it("Should login succesfully", async () => {
-        const res = await request(app.getHttpServer()).post("/auth/login").send(loginDto).expect(HttpStatus.OK)
+        const res = await request(app.getHttpServer()).post("/auth/login").send(loginDto).expect(HttpStatus.OK);
         access_token = res.body.access_token;
         return res;
       });
 
+      it("Should return user data", async () => {
+        const res = await request(app.getHttpServer()).get("/profile").set('Authorization', `Bearer ${access_token}`).expect(HttpStatus.OK);
+        const data = res.body;
+        return expect(data.id).toEqual(userId)
+      });
+
+    });
+
+    describe("refresh", () => {
+      let newAccessToken: string;
+      it("should NOT get an access token if refresh token is invalid", () => {
+        return request(app.getHttpServer()).post("/auth/refresh").expect(HttpStatus.UNAUTHORIZED);
+      });
+
+      it("should get an access token if refresh token is valid", async () => {
+        const { body } = await request(app.getHttpServer()).post("/auth/login").send(loginDto).expect(HttpStatus.OK);
+        refresh_token = body.refresh_token;
+        const res = await request(app.getHttpServer()).post("/auth/refresh").set('Authorization', `Bearer ${refresh_token}`).expect(HttpStatus.OK);
+        newAccessToken = res.body.access_token;
+      });
+
+      it("should get user data if retrieved access token is valid", async () => {
+        return request(app.getHttpServer()).get("/profile").set('Authorization', `Bearer ${newAccessToken}`).expect(HttpStatus.OK);
+      });
+    });
+
+    describe("logout", () => {
+      it("should NOT logout if access token is invalid", () => {
+        return request(app.getHttpServer()).post("/auth/logout").expect(HttpStatus.UNAUTHORIZED);
+      });
+
+      it("should logout and refresh token should be invalid", async () => {
+        await request(app.getHttpServer()).post("/auth/logout").set('Authorization', `Bearer ${access_token}`).expect(HttpStatus.OK);
+        return request(app.getHttpServer()).post("/auth/refresh").set('Authorization', `Bearer ${refresh_token}`).expect(HttpStatus.FORBIDDEN);
+      });
     });
 
   });
@@ -150,7 +185,7 @@ describe('AppController (e2e)', () => {
         confirmPassword: "newPassword",
         email: "email@gmail.com"
       };
-  
+
       const loginDto_: LoginDto = {
         username: registerDto_.username,
         password: registerDto_.password
