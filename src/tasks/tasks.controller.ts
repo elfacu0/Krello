@@ -1,9 +1,11 @@
 import { Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards, Request, Body, Delete, Patch } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateTaskDto, EditTaskDto } from './dto';
 import { DeleteTaskDto } from './dto/deleteTask.dto';
 import { TasksService } from './tasks.service';
 
+@ApiTags('tasks')
 @Controller('tasks')
 export class TasksController {
     constructor(private taskService: TasksService) { }

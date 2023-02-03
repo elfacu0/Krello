@@ -1,8 +1,10 @@
 import { Controller, HttpCode, HttpStatus, Post, UseGuards, Request, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CollectionsService } from './collections.service';
 import { ImportCollectionDto } from './dto';
 
+@ApiTags('collections')
 @Controller('collections')
 export class CollectionsController {
     constructor(private collectionsService: CollectionsService) { }
