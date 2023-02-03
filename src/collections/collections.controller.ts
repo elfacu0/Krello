@@ -1,5 +1,5 @@
 import { Controller, HttpCode, HttpStatus, Post, UseGuards, Request, Body } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger'
+import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CollectionsService } from './collections.service';
 import { ImportCollectionDto } from './dto';
@@ -9,6 +9,7 @@ import { ImportCollectionDto } from './dto';
 export class CollectionsController {
     constructor(private collectionsService: CollectionsService) { }
 
+    @ApiOperation({ description: "Creates a collection of all the user tasks" })
     @HttpCode(HttpStatus.CREATED)
     @UseGuards(JwtAuthGuard)
     @Post("export")
@@ -17,6 +18,7 @@ export class CollectionsController {
         return this.collectionsService.exportCollection(user.id);
     }
 
+    @ApiOperation({ description: "Imports all the tasks from a given collection" })
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
     @Post("import")
