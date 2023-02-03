@@ -7,6 +7,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true
   }));
+
+  app.enableCors({
+    allowedHeaders: ['content-type',"Authorization"],
+    origin: 'https://krello-front.vercel.app/',
+    credentials: true,
+  });
+
   await app.listen(8080);
 }
 bootstrap();
