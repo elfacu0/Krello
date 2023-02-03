@@ -8,11 +8,7 @@ async function bootstrap() {
     whitelist: true
   }));
 
-  app.enableCors({
-    allowedHeaders: ['content-type',"Authorization"],
-    origin: 'https://krello-front.vercel.app/',
-    credentials: true,
-  });
+  app.enableCors();
 
   await app.listen(8080);
 }
