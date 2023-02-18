@@ -2,9 +2,7 @@ import { Body, Controller, Post, UseGuards, Request, HttpCode, HttpStatus } from
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { LocalAuthGuard } from './local-auth.guard';
-import { RefreshAuthGuard } from './rt-auth.guard';
+import { JwtAuthGuard, LocalAuthGuard, RefreshAuthGuard } from './guards';
 
 @ApiTags('auth')
 @Controller('auth')

@@ -1,6 +1,6 @@
 import { Controller, HttpCode, HttpStatus, Post, UseGuards, Request, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards';
 import { CollectionsService } from './collections.service';
 import { ImportCollectionDto } from './dto';
 

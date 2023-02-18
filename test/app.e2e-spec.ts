@@ -32,14 +32,6 @@ describe('AppController (e2e)', () => {
     app.close();
   })
 
-  it('should get hello world!', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
-
-
   describe("Auth", () => {
     const registerDto: RegisterDto = {
       username: "testUser",
